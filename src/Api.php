@@ -426,7 +426,7 @@ class Api
 
         if (config('yandex-geocoding.api_key')) {
 
-            $this->_filters['key'] = (string) config('yandex-geocoding.api_key');
+            $this->_filters['apikey'] = (string) config('yandex-geocoding.api_key');
 
         }
 
