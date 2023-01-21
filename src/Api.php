@@ -116,6 +116,10 @@ class Api
             CURLOPT_HTTPGET        => 1,
 
             CURLOPT_FOLLOWLOCATION => 1,
+            
+            CURLOPT_SSL_VERIFYHOST => 0,
+            
+            CURLOPT_SSL_VERIFYPEER => 0
 
         );
 
@@ -433,4 +437,60 @@ class Api
         return $this;
 
     }
+    
+    
+     /**
+     * @param $bbox
+     * @return $this
+     */
+    public function setBbox($bbox)
+    {
+        $this->_filters['bbox'] = $bbox;
+        return $this;
+    }
+    
+     /**
+     * @param $lat
+     * @param $lng
+     * @param $length
+     * @param $azimuth
+     * @return array
+     */
+    public function getCoordinatesAzimuth($lat,$lng,$length,$azimuth){
+        $earth_radius = 6372797;
+        //LAT1 = LAT + L * COS(AZIMUT * PI / 180) / (6371000 * PI / 180)
+        //LON1 = LON + L * SIN(AZIMUT * PI / 180) / COS(LAT * PI / 180) / (6371000 * PI / 180)
+        //
+        $lat1 = $lat + $length * cos($azimuth *pi()/180)/($earth_radius * pi()/180);
+        $lon1 = $lng + $length * sin($azimuth *pi()/180)/cos($lat * pi()/180)/($earth_radius * pi()/180);
+
+        return [$lat1,$lon1];
+    }
+    
+     /**
+     * @param $clat
+     * @param $clng
+     * @param $length
+     * @return array
+     */
+    public function getCoordQuare($clat,$clng,$length){
+           $newlen = $this->getGipotinuze($length);
+           $x1y1 = $this->getCoordinatesAzimuth($clat,$clng,$newlen,45);
+           $xy = $this->getCoordinatesAzimuth($clat,$clng,$newlen,225);
+           return [$xy,$x1y1];
+
+
+    }
+
+
+    /**
+     * @param $length
+     * @return float
+     */
+    public function getGipotinuze($length) {
+        $c = sqrt(pow($length,2) + pow($length,2));
+        return $c;
+    }
+    
+    
 }
