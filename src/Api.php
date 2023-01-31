@@ -176,7 +176,7 @@ class Api
     public function getResponse()
     {
 
-        return $this->_response->getList();
+        return $this->_response;//->getList();
 
     }
     /**
